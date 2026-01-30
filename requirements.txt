@@ -9,11 +9,12 @@ uvicorn[standard]==0.27.1
 httpx==0.26.0
 
 # RAG & embeddings (use OpenAI or local)
+# langchain 0.1.9 requires langchain-core>=0.1.26,<0.2
 langchain==0.1.9
 langchain-community==0.0.24
 langchain-openai==0.0.6
 langchain-text-splitters==0.0.1
-langchain-core==0.1.23
+langchain-core>=0.1.26,<0.2
 chromadb==0.4.22
 sentence-transformers==2.3.1
 
