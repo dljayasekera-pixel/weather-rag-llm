@@ -52,10 +52,17 @@
         body: JSON.stringify({ zipcode, country }),
       });
 
-      const data = await res.json();
+      let data;
+      const contentType = res.headers.get("content-type") || "";
+      try {
+        data = contentType.includes("application/json") ? await res.json() : { message: await res.text() };
+      } catch (_) {
+        data = { message: "Server returned invalid response." };
+      }
 
       if (!res.ok) {
-        showResult(false, "Error", data.detail || data.message || "Request failed.");
+        const msg = typeof data.detail === "string" ? data.detail : Array.isArray(data.detail) ? data.detail.map(function (x) { return x.msg || x; }).join(", ") : data.message || "Request failed.";
+        showResult(false, "Error", msg);
         return;
       }
 

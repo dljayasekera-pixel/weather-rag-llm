@@ -43,13 +43,16 @@ def get_forecast(latitude: float, longitude: float, timezone: str = "auto") -> O
         "latitude": latitude,
         "longitude": longitude,
         "timezone": timezone,
-        "daily": ["temperature_2m_min", "temperature_2m_max", "relative_humidity_mean"],
+        "daily": "temperature_2m_min,temperature_2m_max,relative_humidity_2m_mean",
         "forecast_days": 7,
     }
-    with httpx.Client(timeout=10.0) as client:
-        r = client.get(WEATHER_URL, params=params)
-        r.raise_for_status()
-        data = r.json()
+    try:
+        with httpx.Client(timeout=15.0) as client:
+            r = client.get(WEATHER_URL, params=params)
+            r.raise_for_status()
+            data = r.json()
+    except (httpx.HTTPStatusError, httpx.RequestError) as e:
+        return None
     daily = data.get("daily") or {}
     if not daily or "temperature_2m_min" not in daily:
         return None
@@ -57,7 +60,7 @@ def get_forecast(latitude: float, longitude: float, timezone: str = "auto") -> O
         "time": daily.get("time", []),
         "temperature_min": daily.get("temperature_2m_min", []),
         "temperature_max": daily.get("temperature_2m_max", []),
-        "relative_humidity_mean": daily.get("relative_humidity_mean", []),
+        "relative_humidity_mean": daily.get("relative_humidity_2m_mean", []),
     }
 
 

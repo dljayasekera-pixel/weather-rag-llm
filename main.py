@@ -67,7 +67,16 @@ def api_predict(req: ZipcodeRequest):
     zipcode = (req.zipcode or "").strip()
     if not zipcode:
         raise HTTPException(status_code=400, detail="zipcode is required")
-    result = run_predict(zipcode=zipcode, country=req.country or "US", use_rag=True)
+    try:
+        result = run_predict(zipcode=zipcode, country=req.country or "US", use_rag=True)
+    except Exception as e:
+        return PredictionResponse(
+            success=False,
+            message=f"Server error: {str(e)}",
+            location=None,
+            forecast=None,
+            error=str(e),
+        )
     return PredictionResponse(
         success=result["success"],
         message=result["message"],
