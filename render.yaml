@@ -1,0 +1,14 @@
+# Render blueprint: deploy Weather RAG LLM as a web service
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: weather-rag-llm
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+        # Optional: add in Render dashboard for LLM interpretations

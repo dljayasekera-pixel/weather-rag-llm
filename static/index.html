@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather RAG — Temp & Humidity by Zipcode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="layout">
+    <header class="header">
+      <h1 class="title">Weather RAG</h1>
+      <p class="tagline">Max/min temperature & relative humidity by zipcode</p>
+    </header>
+
+    <main class="main">
+      <form class="form" id="predict-form" aria-label="Get weather prediction">
+        <div class="input-row">
+          <label for="zipcode" class="label">Zipcode</label>
+          <input
+            type="text"
+            id="zipcode"
+            name="zipcode"
+            class="input"
+            placeholder="e.g. 90210"
+            autocomplete="postal-code"
+            required
+          />
+        </div>
+        <div class="input-row">
+          <label for="country" class="label">Country code</label>
+          <input
+            type="text"
+            id="country"
+            name="country"
+            class="input input--short"
+            placeholder="US"
+            value="US"
+            maxlength="2"
+          />
+        </div>
+        <button type="submit" class="btn" id="submit-btn">Get prediction</button>
+      </form>
+
+      <div class="result" id="result" aria-live="polite" hidden>
+        <div class="result__inner">
+          <h2 class="result__title" id="result-title"></h2>
+          <div class="result__body" id="result-body"></div>
+        </div>
+      </div>
+
+      <div class="status" id="status" aria-live="polite" hidden>
+        <span class="status__text" id="status-text"></span>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>Powered by RAG + Open-Meteo. Optional: set <code>OPENAI_API_KEY</code> for LLM interpretations.</p>
+    </footer>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

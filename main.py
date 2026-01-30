@@ -14,15 +14,23 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from app.predict import predict as run_predict
+
+PROJECT_ROOT = Path(__file__).resolve().parent
+STATIC_DIR = PROJECT_ROOT / "static"
 
 app = FastAPI(
     title="Weather RAG LLM",
     description="Predict maximum/minimum temperature and relative humidity for a zipcode using RAG + LLM.",
     version="1.0.0",
 )
+
+# Serve static assets (CSS, JS)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 class ZipcodeRequest(BaseModel):
@@ -38,8 +46,18 @@ class PredictionResponse(BaseModel):
     error: str | None
 
 
+@app.get("/health")
+def health():
+    """Lightweight health check for Render (no RAG load)."""
+    return {"status": "ok"}
+
+
 @app.get("/")
 def root():
+    """Serve the website (zipcode form)."""
+    index_path = STATIC_DIR / "index.html"
+    if index_path.exists():
+        return FileResponse(index_path)
     return {"service": "Weather RAG LLM", "docs": "/docs", "predict": "POST /predict"}
 
 

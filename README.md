@@ -51,19 +51,41 @@ python main.py 90210
 python main.py 10001 US
 ```
 
-### API (FastAPI)
+### Website (recommended)
 
-Start the server:
+Start the server and open the site in your browser:
 
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-- **Docs**: http://localhost:8000/docs  
-- **Predict**: `POST /predict` with JSON body:
+- **Website**: http://localhost:8000 — enter a zipcode and get max/min temperature and relative humidity.
+- **API docs**: http://localhost:8000/docs  
+- **Predict API**: `POST /predict` with JSON body:
   ```json
   { "zipcode": "90210", "country": "US" }
   ```
+
+## Deploy the website
+
+The app serves the website and API from the same process. Deploy to a host that runs Python (e.g. **Render**, **Railway**, **Fly.io**).
+
+### Render (free tier)
+
+1. Push the repo to GitHub.
+2. Go to [render.com](https://render.com) → **New** → **Web Service**.
+3. Connect your GitHub repo `weather-rag-llm`.
+4. **Build command**: `pip install -r requirements.txt`  
+   **Start command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+5. (Optional) Add **Environment** → `OPENAI_API_KEY` for LLM interpretations.
+6. Deploy. Render will give you a URL like `https://weather-rag-llm.onrender.com`.
+
+You can also use the included **Blueprint**: **New** → **Blueprint** and point it at this repo; `render.yaml` will configure the service.
+
+### Railway / Fly.io
+
+- **Railway**: New project → Deploy from GitHub → same build/start commands as above; set `PORT` from Railway’s env.
+- **Fly.io**: Use `fly launch` and set the start command to `uvicorn main:app --host 0.0.0.0 --port 8080` (or the port Fly provides).
 
 ## Project structure
 
@@ -75,10 +97,15 @@ weather-rag-llm/
 │   ├── rag_service.py       # Knowledge base + ChromaDB + retrieval
 │   ├── llm_service.py       # LLM response generation (OpenAI or template)
 │   └── predict.py           # RAG pipeline orchestration
+├── static/                   # Website frontend
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
 ├── knowledge_base/         # Markdown docs for RAG
 │   ├── weather_glossary.md
 │   └── comfort_tips.md
-├── main.py                  # FastAPI app + CLI entry
+├── main.py                  # FastAPI app + static site + CLI
+├── render.yaml              # Optional: Render blueprint
 ├── requirements.txt
 ├── .env.example
 └── README.md
