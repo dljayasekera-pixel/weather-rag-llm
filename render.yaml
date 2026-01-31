@@ -9,6 +9,9 @@ services:
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
+      - key: DISABLE_RAG
+        value: "1"
+        # Keeps predictions fast on free tier (weather-only; no heavy RAG)
       - key: OPENAI_API_KEY
         sync: false
         # Optional: add in Render dashboard for LLM interpretations

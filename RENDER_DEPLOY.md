@@ -55,7 +55,19 @@ Your repo should be at: **https://github.com/dljayasekera-pixel/weather-rag-llm*
 
 ---
 
-## 4. (Optional) Add OpenAI for LLM responses
+## 4. Set DISABLE_RAG=1 for reliable predictions (recommended on free tier)
+
+On the free plan, RAG (embeddings + ChromaDB) is too heavy and can cause timeouts or crashes, so predictions may never appear.
+
+1. In your service on Render, go to **Environment**
+2. Add: **Key** `DISABLE_RAG`, **Value** `1`
+3. Save. Render will redeploy.
+
+With this, the app returns **weather-only** predictions (max/min temp, humidity from Open-Meteo) in a few seconds. You still get full predictions; only the extra “tips from knowledge base” are skipped.
+
+---
+
+## 5. (Optional) Add OpenAI for LLM responses
 
 If you want the app to use GPT for natural-language interpretations:
 
@@ -65,7 +77,7 @@ If you want the app to use GPT for natural-language interpretations:
 
 ---
 
-## 5. Use your live site
+## 6. Use your live site
 
 - **Website:** open your Render URL (e.g. **https://weather-rag-llm.onrender.com**)
 - Enter a zipcode and click **Get prediction**

@@ -46,11 +46,15 @@
     showStatus("Getting weather prediction…", true);
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(function () { controller.abort(); }, 90000);
       const res = await fetch("/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ zipcode, country }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       let data;
       const contentType = res.headers.get("content-type") || "";
@@ -72,7 +76,10 @@
         showResult(false, "Error", data.message || data.error || "Unknown error.");
       }
     } catch (err) {
-      showResult(false, "Error", err.message || "Network error. Is the server running?");
+      const msg = err.name === "AbortError"
+        ? "Request took too long. Try again, or the server may be starting up."
+        : (err.message || "Network error. Is the server running?");
+      showResult(false, "Error", msg);
     } finally {
       hideStatus();
       submitBtn.disabled = false;
